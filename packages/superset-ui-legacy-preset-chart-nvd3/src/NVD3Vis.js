@@ -1116,7 +1116,66 @@ function nvd3Vis(element, props) {
     hideTooltips(true);
   }
 
-  nv.addGraph(drawGraph);
+  nv.addGraph(drawGraph, function() {
+    // --------------------------------------------------------------------
+    // for pie chart .nv-pie
+    d3.selectAll('.nv-pieChart .nv-legend-symbol').on('click', function(el) {
+      const selectedElem = this;
+      let filter_selections = [];
+      // need to customizing based on your need here:
+      const filter_name = 'region';
+      filter_selections.push(this.__data__.x);
+      applyFilter(d3.select(this), filter_name, filter_selections);
+    });
+
+    // --------------------------------------------------------------------
+    // for line chart by category
+    d3.selectAll('.line .nv-legend-symbol').on('click', function(el) {
+      const selectedElem = this;
+      let filter_selections = [];
+      // need to customizing based on your need here:
+      const filter_name = 'country_name';
+      filter_selections.push(this.__data__.key);
+      applyFilter(d3.select(this), filter_name, filter_selections);
+    });
+
+    // --------------------------------------------------------------------
+    // line chart by time
+    d3.selectAll('path.nv-line').on('click', function(elem) {
+      console.log('path.nv-line click test');
+      // need to customizing based on your need here:
+      const filter_name = 'year';
+      const d = d3.select(this);
+      const tip = d[0].parentNode.childNodes[2];
+      const key = tip.innerText.substring(0, 4);
+
+      // year/time format need to customizing based on the actual time format
+      applyFilter(d3.select(this), filter_name, key + '-01-01 00:00:00.000000');
+    });
+
+    // --------------------------------------------------------------------
+    // for scatter chart. bubbles(.nvd3.nv-scatter) can overlap. click legend instead!
+    d3.selectAll('.bubble .nv-legend-symbol').on('click', function(el) {
+      const selectedElem = this;
+      let filter_selections = [];
+      // need to customizing based on your need here:
+      const filter_name = 'region';
+      filter_selections.push(this.__data__.key);
+      applyFilter(d3.select(this), filter_name, filter_selections);
+    });
+    // --------------------------------------------------------------------
+    // for bar chart
+    d3.selectAll('.nv-bar').on('click', function(el) {
+      console.log('.nv-bar click test, value: ' + el.value);
+    });
+  });
+
+  function applyFilter(selection, filter_name, filter_selections) {
+    const newSelectedValues = {
+      [filter_name]: filter_selections,
+    };
+    props.onAddFilter(newSelectedValues);
+  }
 }
 
 nvd3Vis.displayName = 'NVD3';

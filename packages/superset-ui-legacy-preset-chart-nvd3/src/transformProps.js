@@ -118,6 +118,7 @@ export default function transformProps(chartProps) {
     lineInterpolation,
     maxBubbleSize: parseInt(maxBubbleSize, 10),
     numberFormat,
+    onAddFilter,
     onBrushEnd: isTruthy(sendTimeRange)
       ? timeRange => {
           onAddFilter('__time_range', timeRange, false, true);
